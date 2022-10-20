@@ -71,9 +71,9 @@ num_pass_coverages_by_down <- function(pass_coverage_choice){
 }
 
 
-## Play Result Lengths by Interval
-play_result_lengths <- play_data %>%                       
-  mutate(play_intervals = cut(playResult, seq(min(playResult), max(playResult), 10))) %>% 
+## Pre-Penalty Play Result Lengths by Interval
+pre_penalty_play_result_lengths <- play_data %>%                       
+  mutate(play_intervals = cut(prePenaltyPlayResult, seq(min(prePenaltyPlayResult), 92, 10))) %>% 
   group_by(play_intervals) %>% 
   summarize(n=n()) %>% 
   as.data.frame()
