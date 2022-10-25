@@ -32,7 +32,8 @@ def create_football_field(imgSize=(12.66, 24),
                           labelNumbers=True,
                           showArrow=True,
                           fieldColor='gray',
-                          endZoneColor='yellow'):
+                          endZoneColor='yellow',
+                          bounds=False):
   rect = patches.Rectangle((0, 0), 53.3, 120, linewidth=0.1,
                              edgecolor='r', facecolor=fieldColor, zorder=0) #Creates the rectangle of coordinates for the field
   fig, ax = plt.subplots(1, figsize=imgSize)
@@ -75,7 +76,13 @@ def create_football_field(imgSize=(12.66, 24),
         ax.plot([29.73, 30.39],[y, y],  color='white')
   
   if playerCoordinatesProvided: #Plots player coordinates
-    positionsPocket=["QB","T","C","G"]
+    dictionaryValidPos={'SHOTGUN':['HB','HB-R','HB-L','TE','TE-L','TE-R','LT','RT','C','LG','RG','QB'],
+                    'EMPTY':['LT','LG','C','RG','RT','QB'],
+                    'SINGLEBACK':['HB','QB','LT','LG','C','TE','RG','RT','QB'],
+                    'I_Form':['HB','FB','LT','LG','C','RG','RT','TE','TE-L','TE-R'],
+                    'Jumbo':['HB','HB-R','HB-L', 'FB','FB-L','FB-R','LT','LG','C','RG','RT','TE','TE-L','TE-R','TE-oR','TE-iR','TE-oL','TE-oL'],
+                    'Pistol':['LT','LG','C','RG','RT','TE','TE-R','TE-L','HB','HB-R','HB-L','QB'],
+                    'Wildcat':['HB','QB','FB-R','FB-L','TE-L','TE-R','LG','C','RG','RT','LT','HB-R','HB-L']}
     listPoints=[]
     for index, row in playerCoordinates.iterrows():
       if row['team']==row['homeTeamAbbr']:
@@ -97,17 +104,21 @@ def create_football_field(imgSize=(12.66, 24),
       #   listAppend.append(row['y'])
       #   listAppend.append(row['x'])
       #   listPoints.append(listAppend)
-    xCoordinateQB=playerCoordinates.loc[(playerCoordinates['officialPosition']=='QB')]['x'].unique()[0]
-    yCoordinateQB=playerCoordinates.loc[(playerCoordinates['officialPosition']=='QB')]['y'].unique()[0]
-    teamQB=playerCoordinates.loc[(playerCoordinates['officialPosition']=='QB')]['team'].unique()[0]
+    xCoordinateQB=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp']=='QB')]['x'].unique()[0]
+    yCoordinateQB=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp']=='QB')]['y'].unique()[0]
+    teamQB=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp']=='QB')]['team'].unique()[0]
     playerCoordinates['distanceFromQB']=((playerCoordinates['x']-xCoordinateQB)**2 + (playerCoordinates['y']-yCoordinateQB)**2)**(1/2)
     minimumDistanceOpposingTeam=min(playerCoordinates.loc[(playerCoordinates['team']!=teamQB)&(playerCoordinates['team']!="football")]['distanceFromQB'])
     #dfOffensive=playerCoordinates.loc[(playerCoordinates['team']==teamQB)&(playerCoordinates['distanceFromQB']<=minimumDistanceOpposingTeam)]
     #print(playerCoordinates[['team','distanceFromQB']])
-    dfOffensive=playerCoordinates.loc[(playerCoordinates['officialPosition']=="QB")|(playerCoordinates['officialPosition']=="G")|(playerCoordinates['officialPosition']=="T")|(playerCoordinates['officialPosition']=="C")]
-    closerToQB=playerCoordinates.loc[(playerCoordinates['distanceFromQB']<=minimumDistanceOpposingTeam)&((playerCoordinates['officialPosition']=="G")|(playerCoordinates['officialPosition']=="T")|(playerCoordinates['officialPosition']=="C"))]['nflId'].nunique()
+    #print(dictionaryValidPos[playerCoordinates['offenseFormation'].values[0]])
+    dfOffensive=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp'].isin(dictionaryValidPos[playerCoordinates['offenseFormation'].values[0]]))]
+    if bounds:
+      dfOffensive=dfOffensive.loc[(dfOffensive['x']>=bounds[0])&(dfOffensive['x']<=bounds[1])&(dfOffensive['y']>=bounds[2])&(dfOffensive['y']<=bounds[3])]
+        #dfOffensive=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp']=="QB")|(playerCoordinates['pff_positionLinedUp']=="G")|(playerCoordinates['pff_positionLinedUp']=="T")|(playerCoordinates['pff_positionLinedUp']=="C")]
+    closerToQB=playerCoordinates.loc[(playerCoordinates['distanceFromQB']<=minimumDistanceOpposingTeam)&(playerCoordinates['pff_positionLinedUp'].isin(dictionaryValidPos[playerCoordinates['offenseFormation'].values[0]]))]['nflId'].nunique()
     points = dfOffensive[['y', 'x']].values
-    if closerToQB>=1:
+    if closerToQB>=2:
       hull = ConvexHull(dfOffensive[['y','x']])
       for simplex in hull.simplices:
             plt.plot(points[simplex, 0], points[simplex, 1], 'k-')
@@ -124,8 +135,26 @@ def create_football_field(imgSize=(12.66, 24),
 # playId specifies the playId from the week dataframe
 
 def extractAllImagesForAPlay(df1,df2, df3,df4, df5, playId):
+  dictionaryValidPos={'SHOTGUN':['HB','HB-R','HB-L','TE','TE-L','TE-R','LT','RT','C','LG','RG','QB'],
+                    'EMPTY':['LT','LG','C','RG','RT','QB'],
+                    'SINGLEBACK':['HB','QB','LT','LG','C','TE','RG','RT','QB'],
+                    'I_Form':['HB','FB','LT','LG','C','RG','RT','TE','TE-L','TE-R'],
+                    'Jumbo':['HB','HB-R','HB-L', 'FB','FB-L','FB-R','LT','LG','C','RG','RT','TE','TE-L','TE-R','TE-oR','TE-iR','TE-oL','TE-oL'],
+                    'Pistol':['LT','LG','C','RG','RT','TE','TE-R','TE-L','HB','HB-R','HB-L','QB'],
+                    'Wildcat':['HB','QB','FB-R','FB-L','TE-L','TE-R','LG','C','RG','RT','LT','HB-R','HB-L']}
   distinctTimes=df1.loc[(df1['playId'] == playId) ]
   distinctTimes=distinctTimes['time'].unique() #Extracts all times associated with a particular play
+  
+  df1['newTime']=pd.to_datetime(df1['time'])
+  testing=df1.loc[(df1['playId'] == playId)]
+  timeSnap=testing.loc[testing['event']=="ball_snap"]['newTime'].unique()[0]
+  testing=testing.loc[(testing['newTime']==timeSnap)]
+  testingNew=pd.merge(testing,df2, on='gameId', how='left')
+  testingNew=pd.merge(testingNew,df3,on=['playId','gameId'], how='left')
+  testingNew=pd.merge(testingNew,df4,on='nflId', how='left')
+  testingNew=pd.merge(testingNew, df5, on=['playId','gameId','nflId'], how='left')
+
+  lMaxCoordinates=determiningMaxXAndYs(testingNew, timeSnap,dictionaryValidPos)
   array_Of_Images=[]
   directory = "Play_"+str(playId)
   parent_dir = "/content/"
@@ -137,7 +166,7 @@ def extractAllImagesForAPlay(df1,df2, df3,df4, df5, playId):
   os.chdir(path) 
   for i in distinctTimes: 
     dfForRunning=processToVisualize(df1,df2,df3,df4,df5, playId, i) #Goes through each time to process the data to visualize on the football field
-    create_football_field(playerCoordinatesProvided=True,playerCoordinates=dfForRunning, labelNumbers=True ,showArrow=True, fieldColor='darkgreen', endZoneColor='purple') #Generate the field
+    create_football_field(playerCoordinatesProvided=True,playerCoordinates=dfForRunning, labelNumbers=True ,showArrow=True, fieldColor='darkgreen', endZoneColor='purple', bounds=lMaxCoordinates) #Generate the field
     plt.savefig('imgTime:'+i +".png") #saves image into the folder
     array_Of_Images.append('imgTime:'+i +".png") #creates a list of the image names
     plt.close()
@@ -178,3 +207,17 @@ def get_player_color(row, default_color):
     return 'black'
   else:
     return default_color
+
+def determiningMaxXAndYs(tab, timeSnap, dictionaryValidPos):
+  oLinePlayers=tab.loc[tab['pff_positionLinedUp'].isin(dictionaryValidPos[tab['offenseFormation'].values[0]])]
+  if oLinePlayers['team'].unique()[0]==oLinePlayers['homeTeamAbbr'].unique()[0]:
+    maxY=max(oLinePlayers['y'].values)+2
+    minY=min(oLinePlayers['y'].values)-2
+    maxX=max(oLinePlayers['x'].values)+1
+    minX=0
+  else:
+    maxY=max(oLinePlayers['y'].values)+2
+    minY=min(oLinePlayers['y'].values)-2
+    maxX=120
+    minX=min(oLinePlayers['x'].values)-1
+  return [minX, maxX, minY, maxY]
