@@ -112,11 +112,13 @@ def create_football_field(imgSize=(12.66, 24),
     #dfOffensive=playerCoordinates.loc[(playerCoordinates['team']==teamQB)&(playerCoordinates['distanceFromQB']<=minimumDistanceOpposingTeam)]
     #print(playerCoordinates[['team','distanceFromQB']])
     #print(dictionaryValidPos[playerCoordinates['offenseFormation'].values[0]])
-    dfOffensive=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp'].isin(dictionaryValidPos[playerCoordinates['offenseFormation'].values[0]]))]
+    #dfOffensive=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp'].isin(dictionaryValidPos[playerCoordinates['offenseFormation'].values[0]]))]
+    dfOffensive=playerCoordinates.loc[(playerCoordinates['pff_role']=='Pass Block')|(playerCoordinates['pff_role']=='Pass')]
     if bounds:
       dfOffensive=dfOffensive.loc[(dfOffensive['x']>=bounds[0])&(dfOffensive['x']<=bounds[1])&(dfOffensive['y']>=bounds[2])&(dfOffensive['y']<=bounds[3])]
         #dfOffensive=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp']=="QB")|(playerCoordinates['pff_positionLinedUp']=="G")|(playerCoordinates['pff_positionLinedUp']=="T")|(playerCoordinates['pff_positionLinedUp']=="C")]
-    closerToQB=playerCoordinates.loc[(playerCoordinates['distanceFromQB']<=minimumDistanceOpposingTeam)&(playerCoordinates['pff_positionLinedUp'].isin(dictionaryValidPos[playerCoordinates['offenseFormation'].values[0]]))]['nflId'].nunique()
+    #closerToQB=playerCoordinates.loc[(playerCoordinates['distanceFromQB']<=minimumDistanceOpposingTeam)&(playerCoordinates['pff_positionLinedUp'].isin(dictionaryValidPos[playerCoordinates['offenseFormation'].values[0]]))]['nflId'].nunique()
+    closerToQB=playerCoordinates.loc[(playerCoordinates['distanceFromQB']<=minimumDistanceOpposingTeam)&(playerCoordinates['pff_role']=='Pass Block')]['nflId'].nunique()
     points = dfOffensive[['y', 'x']].values
     if closerToQB>=2:
       hull = ConvexHull(dfOffensive[['y','x']])
@@ -209,7 +211,8 @@ def get_player_color(row, default_color):
     return default_color
 
 def determiningMaxXAndYs(tab, timeSnap, dictionaryValidPos):
-  oLinePlayers=tab.loc[tab['pff_positionLinedUp'].isin(dictionaryValidPos[tab['offenseFormation'].values[0]])]
+  #oLinePlayers=tab.loc[tab['pff_positionLinedUp'].isin(dictionaryValidPos[tab['offenseFormation'].values[0]])]
+  oLinePlayers=tab.loc[tab['pff_role']=='Pass Block']
   if oLinePlayers['team'].unique()[0]==oLinePlayers['homeTeamAbbr'].unique()[0] or int(oLinePlayers.quarter.unique()[0])%2==0:
     maxY=max(oLinePlayers['y'].values)+2
     minY=min(oLinePlayers['y'].values)-2
