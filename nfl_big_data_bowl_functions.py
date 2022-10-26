@@ -134,7 +134,7 @@ def create_football_field(imgSize=(12.66, 24),
 # df2 specifies the games dataframe
 # playId specifies the playId from the week dataframe
 
-def extractAllImagesForAPlay(df1,df2, df3,df4, df5, playId):
+def extractAllImagesForAPlay(df1,df2, df3,df4, df5, playId, gameId):
   dictionaryValidPos={'SHOTGUN':['HB','HB-R','HB-L','TE','TE-L','TE-R','LT','RT','C','LG','RG','QB'],
                     'EMPTY':['LT','LG','C','RG','RT','QB'],
                     'SINGLEBACK':['HB','QB','LT','LG','C','TE','RG','RT','QB'],
@@ -142,7 +142,7 @@ def extractAllImagesForAPlay(df1,df2, df3,df4, df5, playId):
                     'Jumbo':['HB','HB-R','HB-L', 'FB','FB-L','FB-R','LT','LG','C','RG','RT','TE','TE-L','TE-R','TE-oR','TE-iR','TE-oL','TE-oL'],
                     'Pistol':['LT','LG','C','RG','RT','TE','TE-R','TE-L','HB','HB-R','HB-L','QB'],
                     'Wildcat':['HB','QB','FB-R','FB-L','TE-L','TE-R','LG','C','RG','RT','LT','HB-R','HB-L']}
-  distinctTimes=df1.loc[(df1['playId'] == playId) ]
+  distinctTimes=df1.loc[(df1['playId'] == playId) & (df1['gameId']==gameId)]
   distinctTimes=distinctTimes['time'].unique() #Extracts all times associated with a particular play
   
   df1['newTime']=pd.to_datetime(df1['time'])
@@ -165,7 +165,7 @@ def extractAllImagesForAPlay(df1,df2, df3,df4, df5, playId):
     pass
   os.chdir(path) 
   for i in distinctTimes: 
-    dfForRunning=processToVisualize(df1,df2,df3,df4,df5, playId, i) #Goes through each time to process the data to visualize on the football field
+    dfForRunning=processToVisualize(df1,df2,df3,df4,df5, playId, i, gameId) #Goes through each time to process the data to visualize on the football field
     create_football_field(playerCoordinatesProvided=True,playerCoordinates=dfForRunning, labelNumbers=True ,showArrow=True, fieldColor='darkgreen', endZoneColor='purple', bounds=lMaxCoordinates) #Generate the field
     plt.savefig('imgTime:'+i +".png") #saves image into the folder
     array_Of_Images.append('imgTime:'+i +".png") #creates a list of the image names
@@ -184,8 +184,8 @@ def extractAllImagesForAPlay(df1,df2, df3,df4, df5, playId):
 # time specifies a particular time to create the image
 
 
-def processToVisualize(df1,df2,df3,df4,df5, playId, time):
-  testing=df1.loc[(df1['playId'] == playId) & (df1['time']==time)]
+def processToVisualize(df1,df2,df3,df4,df5, playId, time, gameId):
+  testing=df1.loc[(df1['playId'] == playId) & (df1['time']==time) & (df1['gameId'] == gameId)]
   testingNew=pd.merge(testing,df2, on='gameId', how='left')
   testingNew=pd.merge(testingNew,df3,on=['playId','gameId'], how='left')
   testingNew=pd.merge(testingNew,df4,on='nflId', how='left')
