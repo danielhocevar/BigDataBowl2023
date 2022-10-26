@@ -210,7 +210,7 @@ def get_player_color(row, default_color):
 
 def determiningMaxXAndYs(tab, timeSnap, dictionaryValidPos):
   oLinePlayers=tab.loc[tab['pff_positionLinedUp'].isin(dictionaryValidPos[tab['offenseFormation'].values[0]])]
-  if oLinePlayers['team'].unique()[0]==oLinePlayers['homeTeamAbbr'].unique()[0] or int(oLinePlayers.quarter.unique()[0])%2==0::
+  if oLinePlayers['team'].unique()[0]==oLinePlayers['homeTeamAbbr'].unique()[0] or int(oLinePlayers.quarter.unique()[0])%2==0:
     maxY=max(oLinePlayers['y'].values)+2
     minY=min(oLinePlayers['y'].values)-2
     maxX=max(oLinePlayers['x'].values)+1
