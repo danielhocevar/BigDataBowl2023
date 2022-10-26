@@ -138,10 +138,10 @@ def extractAllImagesForAPlay(df1,df2, df3,df4, df5, playId, gameId):
   dictionaryValidPos={'SHOTGUN':['HB','HB-R','HB-L','TE','TE-L','TE-R','LT','RT','C','LG','RG','QB'],
                     'EMPTY':['LT','LG','C','RG','RT','QB'],
                     'SINGLEBACK':['HB','QB','LT','LG','C','TE','RG','RT','QB'],
-                    'I_Form':['HB','FB','LT','LG','C','RG','RT','TE','TE-L','TE-R'],
-                    'Jumbo':['HB','HB-R','HB-L', 'FB','FB-L','FB-R','LT','LG','C','RG','RT','TE','TE-L','TE-R','TE-oR','TE-iR','TE-oL','TE-oL'],
-                    'Pistol':['LT','LG','C','RG','RT','TE','TE-R','TE-L','HB','HB-R','HB-L','QB'],
-                    'Wildcat':['HB','QB','FB-R','FB-L','TE-L','TE-R','LG','C','RG','RT','LT','HB-R','HB-L']}
+                    'I_FORM':['HB','FB','LT','LG','C','RG','RT','TE','TE-L','TE-R'],
+                    'JUMBO':['HB','HB-R','HB-L', 'FB','FB-L','FB-R','LT','LG','C','RG','RT','TE','TE-L','TE-R','TE-oR','TE-iR','TE-oL','TE-oL'],
+                    'PISTOL':['LT','LG','C','RG','RT','TE','TE-R','TE-L','HB','HB-R','HB-L','QB'],
+                    'WILDCAT':['HB','QB','FB-R','FB-L','TE-L','TE-R','LG','C','RG','RT','LT','HB-R','HB-L']}
   distinctTimes=df1.loc[(df1['playId'] == playId) & (df1['gameId']==gameId)]
   distinctTimes=distinctTimes['time'].unique() #Extracts all times associated with a particular play
   
