@@ -120,7 +120,7 @@ def create_football_field(imgSize=(12.66, 24),
     #closerToQB=playerCoordinates.loc[(playerCoordinates['distanceFromQB']<=minimumDistanceOpposingTeam)&(playerCoordinates['pff_positionLinedUp'].isin(dictionaryValidPos[playerCoordinates['offenseFormation'].values[0]]))]['nflId'].nunique()
     closerToQB=playerCoordinates.loc[(playerCoordinates['distanceFromQB']<=minimumDistanceOpposingTeam)&(playerCoordinates['pff_role']=='Pass Block')]['nflId'].nunique()
     points = dfOffensive[['y', 'x']].values
-    if closerToQB>=2:
+    if closerToQB>=1:
       hull = ConvexHull(dfOffensive[['y','x']])
       for simplex in hull.simplices:
             plt.plot(points[simplex, 0], points[simplex, 1], 'k-')
