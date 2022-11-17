@@ -528,3 +528,14 @@ def extractAllImagesForAPlayPocketPressure(df1,df2, df3,df4, df5, playId, gameId
   imageio.mimsave('play'+str(playId) +'.gif', files) #Generates the gif of the play
   os.chdir('..')
   return recordingArray
+
+def determiningDistancesAtTimeOfSnap(tab, timeSnap, dictionaryValidPos):
+  xCoordinateQB=tab.loc[(tab['pff_positionLinedUp']=='QB')]['x'].unique()[0]
+  yCoordinateQB=tab.loc[(tab['pff_positionLinedUp']=='QB')]['y'].unique()[0]
+  teamQB=tab.loc[(tab['pff_positionLinedUp']=='QB')]['team'].unique()[0]
+  tab['distanceFromQB']=((tab['x']-xCoordinateQB)**2 + (tab['y']-yCoordinateQB)**2)**(1/2)
+  oLinePlayers=tab.loc[tab['pff_role']=='Pass Block']
+  dictPlayerDistances={}
+  for index, row in oLinePlayers.iterrows():
+    dictPlayerDistances[row['nflId']]=row['distanceFromQB']
+  return dictPlayerDistances
