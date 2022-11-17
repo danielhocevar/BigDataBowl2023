@@ -13,7 +13,8 @@ import glob
 from google.colab import files
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-import math 
+import math
+import numpy as np 
 from scipy.spatial import ConvexHull, convex_hull_plot_2d
 import imageio
 
