@@ -485,7 +485,7 @@ def extractAllImagesForAPlayPocketPressure(df1,df2, df3,df4, df5, playId, gameId
   distinctTimes=distinctTimes['time'].unique() #Extracts all times associated with a particular play
   
   df1['newTime']=pd.to_datetime(df1['time'])
-  testing=df1.loc[(df1['playId'] == playId)]
+  testing=df1.loc[(df1['playId'] == playId) & (df1['gameId'] == gameId)]
   timeSnap=testing.loc[testing['event']=="ball_snap"]['newTime'].unique()[0]
   testing=testing.loc[(testing['newTime']==timeSnap)]
   testingNew=pd.merge(testing,df2, on='gameId', how='left')
@@ -554,7 +554,7 @@ def extractPocketPressureArray(df1,df2, df3,df4, df5, playId, gameId):
   distinctTimes=distinctTimes['time'].unique() #Extracts all times associated with a particular play
   
   df1['newTime']=pd.to_datetime(df1['time'])
-  testing=df1.loc[(df1['playId'] == playId)]
+  testing=df1.loc[(df1['playId'] == playId) & (df1['gameId'] == gameId) ]
   timeSnap=testing.loc[testing['event']=="ball_snap"]['newTime'].unique()[0]
   testing=testing.loc[(testing['newTime']==timeSnap)]
   testingNew=pd.merge(testing,df2, on='gameId', how='left')
@@ -825,7 +825,7 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
     pressure_val=1
   if pressure_val<=0:
     pressure_val=0
-  print(100*pressure_val)
+  #print(100*pressure_val)
   # ax.text(2, 112, f"Pressure: {round(pressure_val * 100, 2)}%", fontSize=25, fontWeight="bold", color = 'w')
   # plt.axis('off')
   if playerCoordinates['event'].unique()[0]=="ball_snap":
