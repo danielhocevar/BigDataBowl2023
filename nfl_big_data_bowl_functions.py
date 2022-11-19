@@ -830,7 +830,7 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
   # plt.axis('off')
   if playerCoordinates['event'].unique()[0]=="ball_snap":
     recordingArrayBool=True
-  elif playerCoordinates['event'].unique()[0]=="pass_forward":
+  elif playerCoordinates['event'].unique()[0]=="pass_forward" or playerCoordinates['event'].unique()[0]=="qb_sack" or playerCoordinates['event'].unique()[0]=="qb_strip_sack":
     recordingArrayBool=False
     recordingArray.append(pressure_val)
   if recordingArrayBool==True:
