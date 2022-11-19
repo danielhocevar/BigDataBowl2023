@@ -714,7 +714,7 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
       bottomRightSMatrix=(row['distanceFromQB']-row['distanceFromQB']*speed_Ratio)/2
       r_matrix=[(row['xComponent'], -row['yComponent']),(row['yComponent'], row['xComponent'])];
       r_matrix=pd.DataFrame(data=r_matrix)
-      s_matrix=[(topLeftSMatrix,0), (0, bottomRightSMatrix)]
+      s_matrix=[(topLeftSMatrix+0.00001,0), (0, bottomRightSMatrix-0.000001)]
       s_matrix=pd.DataFrame(data=s_matrix)
       inverse_r_Matrix=np.linalg.inv(r_matrix)
       multiplyingTogetherFirstTwoMatrices=r_matrix.dot(s_matrix)
@@ -780,7 +780,7 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
       bottomRightSMatrix=(row['distanceFromQB']-row['distanceFromQB']*speed_Ratio)/2
       r_matrix=[(row['xComponent'], -row['yComponent']),(row['yComponent'], row['xComponent'])];
       r_matrix=pd.DataFrame(data=r_matrix)
-      s_matrix=[(topLeftSMatrix,0), (0, bottomRightSMatrix)]
+      s_matrix=[(topLeftSMatrix+0.000001,0), (0, bottomRightSMatrix-0.000001)]
       s_matrix=pd.DataFrame(data=s_matrix)
       inverse_r_Matrix=np.linalg.inv(r_matrix)
       multiplyingTogetherFirstTwoMatrices=r_matrix.dot(s_matrix)
