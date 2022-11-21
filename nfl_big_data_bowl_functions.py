@@ -527,7 +527,7 @@ def extractAllImagesForAPlayPocketPressure(df1,df2, df3,df4, df5, playId, gameId
   files = []
   for filename in array_Of_Images:
     files.append(imageio.imread(filename)) #appends the image to the files
-  imageio.mimsave('play'+str(playId) +'.gif', files) #Generates the gif of the play
+  imageio.mimsave('play'+str(playId) +'.gif', files, fps=10) #Generates the gif of the play
   os.chdir('..')
   return recordingArray
 
