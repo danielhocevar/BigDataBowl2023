@@ -568,14 +568,14 @@ def extractPocketPressureArray(df1,df2, df3,df4, df5, playId, gameId):
   
 
   array_Of_Images=[]
-  directory = "Play_"+str(playId)
-  parent_dir = "/content/"
-  path = os.path.join(parent_dir, directory)
-  try:
-    os.mkdir(path)
-  except:
-    pass
-  os.chdir(path) 
+  # directory = "Play_"+str(playId)
+  # parent_dir = "/content/"
+  # path = os.path.join(parent_dir, directory)
+  # try:
+  #   os.mkdir(path)
+  # except:
+  #   pass
+  # os.chdir(path) 
   recordingArrayBool=False
   recordingArray=[]
   for i in distinctTimes: 
