@@ -339,7 +339,7 @@ def pocketPressure(imgSize=(10.66, 24),
   for index, row in playerCoordinates.iterrows():
     if row['team'] == row['defensiveTeam']:
       # Generate a defensive player pdf
-      speed_Ratio=math.copysign(1, row['xspeed']) * math.copysign(1, row['yspeed']) * (row['s']**2)/(100)
+      speed_Ratio=(row['s']**2)/(100)
       topLeftSMatrix=(row['distanceFromQB']+row['distanceFromQB']*speed_Ratio)/2
       bottomRightSMatrix=(row['distanceFromQB']-row['distanceFromQB']*speed_Ratio)/2
       r_matrix=[(row['xComponent'], -row['yComponent']),(row['yComponent'], row['xComponent'])];
@@ -405,7 +405,7 @@ def pocketPressure(imgSize=(10.66, 24),
       # velocity_D =
       
 
-      speed_Ratio=math.copysign(1, row['xspeed']) * math.copysign(1, row['yspeed']) * (row['s']**2)/(100)
+      speed_Ratio=(row['s']**2)/(100)
       topLeftSMatrix=(row['distanceFromQB']+row['distanceFromQB']*speed_Ratio)/2
       bottomRightSMatrix=(row['distanceFromQB']-row['distanceFromQB']*speed_Ratio)/2
       r_matrix=[(row['xComponent'], -row['yComponent']),(row['yComponent'], row['xComponent'])];
@@ -709,7 +709,7 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
   for index, row in playerCoordinates.iterrows():
     if row['team'] == row['defensiveTeam']:
       # Generate a defensive player pdf
-      speed_Ratio=math.copysign(1, row['xspeed']) * math.copysign(1, row['yspeed']) * (row['s']**2)/(100)
+      speed_Ratio=(row['s']**2)/(100)
       topLeftSMatrix=(row['distanceFromQB']+row['distanceFromQB']*speed_Ratio)/2
       bottomRightSMatrix=(row['distanceFromQB']-row['distanceFromQB']*speed_Ratio)/2
       r_matrix=[(row['xComponent'], -row['yComponent']),(row['yComponent'], row['xComponent'])];
@@ -775,7 +775,7 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
       # velocity_D =
       
 
-      speed_Ratio=math.copysign(1, row['xspeed']) * math.copysign(1, row['yspeed']) * (row['s']**2)/(100)
+      speed_Ratio=(row['s']**2)/(100)
       topLeftSMatrix=(row['distanceFromQB']+row['distanceFromQB']*speed_Ratio)/2
       bottomRightSMatrix=(row['distanceFromQB']-row['distanceFromQB']*speed_Ratio)/2
       r_matrix=[(row['xComponent'], -row['yComponent']),(row['yComponent'], row['xComponent'])];
