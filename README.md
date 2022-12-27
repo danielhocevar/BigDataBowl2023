@@ -14,7 +14,7 @@ Aaron White, Statistics Undergraduate Student | [Linkedin](https://www.linkedin.
 
 ### Code
 
-Our Code directory contains all code applied to complete our NFL Big Data Bowl Project. Under the R subdirectory, we include the R file applied to complete our Exploratory Data Analysis (EDA). Under the python directory, we include subdirectories with code for our visualizations, CPP data, survival analysis and data filtration.
+Our Code directory contains all code applied to complete our NFL Big Data Bowl Project. Under the R subdirectory, we include the R file applied to complete our Exploratory Data Analysis (EDA). Under the python directory, we include subdirectories with code for our visualizations, CPP data, and survival analysis.
 
 ### Dataset
 
