@@ -17,6 +17,7 @@ uploaded = files.upload()
 
 final_dataset = pd.read_csv("finalDataset.csv")
 
+# Function used to group maximum CPP into bucket intervals
 def takeFloor(val):
   newVal=0
   if val<0.20:
@@ -35,22 +36,27 @@ def takeFloor(val):
 
 final_dataset['maximas_rounded_off_single_decimal'] = final_dataset['maximas'].apply(takeFloor)
 
+# Calculatie mean completion rate and total sacks, hits, and hurries for each maximum CPP interval
 passingPlays = final_dataset.loc[(final_dataset['passResult'] == "I")|(final_dataset['passResult'] == "C")]
 passingPlays['completion'] = passingPlays['passResult'].apply(lambda x: 1 if x == "C" else 0)
-passingPercentage = pd.DataFrame(passingPlays.groupby('maximas_rounded_off_single_decimal')['completion'].mean())
+passingPercentage = pd.DataFrame(passingPlays.groupby('maximas_rounded_off_single_decimal')['completion'].mean()
 dfSack = pd.DataFrame(final_dataset.groupby('maximas_rounded_off_single_decimal')['pff_sack'].sum())
-dfHurry = pd.DataFrame(final_dataset.groupby('maximas_rounded_off_single_decimal')['pff_hurryAllowed'].sum())
 dfHit = pd.DataFrame(final_dataset.groupby('maximas_rounded_off_single_decimal')['pff_hitAllowed'].sum())
+dfHurry = pd.DataFrame(final_dataset.groupby('maximas_rounded_off_single_decimal')['pff_hurryAllowed'].sum())
 
 plt.style.use('fivethirtyeight')
+# Make a 20x10 figure for the two graphs to be displayed on
 fig, axs = plt.subplots(1, 2, figsize=(20, 10))
+# Make the figure and graph background white
 fig.patch.set_facecolor('#FFFFFF')
 axs[0].set(facecolor='#FFFFFF')
 axs[1].set(facecolor='#FFFFFF')
+# Plot graph on left
 axs[0].plot(passingPercentage)
 axs[0].set_title('Completion % vs Maximum CPP During Play')
 axs[0].set_xlabel('Maximum CPP During Play')
 axs[0].set_ylabel('Completion %')
+# Plot graph on right
 axs[1].plot(dfSack)
 axs[1].plot(dfHit)
 axs[1].plot(dfHurry)
