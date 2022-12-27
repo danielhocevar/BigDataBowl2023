@@ -22,6 +22,7 @@ df = pd.read_csv('passRushers.csv')
 float_df = df["Pressure Array"].apply(lambda x: [float(el) for el in x.strip("[]").split(",")])
 df["Pressure Array"] = float_df
 
+# Only include plays that had four pass rushers
 four_rushers_df = df.loc[df['count'] == 4]
 
 def create_survival_analysis(df):
@@ -65,12 +66,15 @@ def extract_auc_defense_array(df):
     all_team_survival_defence_auc.append(team_survival_auc)
   return all_team_survival_defence_auc
 
+# Turn DPLE times by team into a dataframe
+four_rush_df = pd.DataFrame(extract_auc_defense_array(four_rushers_df))
+# Keep the 10 best DPLEs
 four_rush_df = pd.DataFrame(extract_auc_defense_array(four_rushers_df)).sort_values(by=[1]).nsmallest(10, 1)
 four_rush_df['Rank'] = range(1, 11)
 four_rush_df = four_rush_df.rename(columns={0: 'Team', 1: 'PocketLifetime'})
 four_rush_df = four_rush_df[['Rank', 'Team', 'PocketLifetime']]
 four_rush_df = four_rush_df.round(3)
+# Count how many sacks, hits, and hurries each team got
 sacks = four_rushers_df.groupby(['defensiveTeam'])['pff_sack'].sum()
 hits = four_rushers_df.groupby(['defensiveTeam'])['pff_hitAllowed'].sum()
 hurries = four_rushers_df.groupby(['defensiveTeam'])['pff_hurryAllowed'].sum()
-four_rush_df
