@@ -14,7 +14,7 @@ Aaron White, Statistics Undergraduate Student | [Linkedin](https://www.linkedin.
 
 ### Code
 
-Our Code directory contains all code applied to complete our NFL Big Data Bowl Project. Under the R subdirectory, we include the R file applied to complete our Exploratory Data Analysis (EDA). Under the python directory, we include subdirectories with code for our visualizations, CPP data, and survival analysis.
+Our Code directory contains all code applied to complete our NFL Big Data Bowl Project. Under the R subdirectory, we include the R file applied to complete our Exploratory Data Analysis (EDA). Under the Python directory, we include subdirectories with code for our visualizations, CPP data, and survival analysis.
 
 ### Dataset
 
@@ -22,7 +22,7 @@ Our Dataset directory contains the csv we used to conduct our analysis of OPLE/D
 
 ### Formulas
 
-Our Formulas directory contains a pdf containing the formulas we applied to develop our CPP model in addition to our OPLE/DPLE Survival Analysis Metric.
+Our Formulas directory contains a pdf with the formulas we applied to develop our CPP model in addition to our OPLE/DPLE Survival Analysis Metric.
 
 ### Figures
 
