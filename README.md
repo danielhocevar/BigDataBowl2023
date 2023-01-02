@@ -28,7 +28,7 @@ Our Formulas directory contains a pdf with the formulas we applied to develop ou
 
 Our Figures directory contains all images used in our Kaggle submission for the 2023 NFL Big Data Bowl.
 
-### Bibliography
+## Bibliography
 
 Bornn, L. & Fernandez, J. (2018). Wide Open Spaces: A statistical technique for measuring space creation in professional soccer. MIT Sloan Sports Analytics Conference. http://www.lukebornn.com/papers/fernandez_ssac_2018.pdf
 
