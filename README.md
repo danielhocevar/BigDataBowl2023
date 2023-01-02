@@ -27,3 +27,15 @@ Our Formulas directory contains a pdf with the formulas we applied to develop ou
 ### Figures
 
 Our Figures directory contains all images used in our Kaggle submission for the 2023 NFL Big Data Bowl.
+
+### Bibliography
+
+Bornn, L. & Fernandez, J. (2018). Wide Open Spaces: A statistical technique for measuring space creation in professional soccer. MIT Sloan Sports Analytics Conference. http://www.lukebornn.com/papers/fernandez_ssac_2018.pdf
+
+Burris, K. (2019). A Trajectory Planning Algorithm for Quantifying Space Ownership in Professional Football. NFL Big Data Bowl 2019. https://operations.nfl.com/media/3665/big-data-bowl-burris.pdf
+
+Cavan, E., Kumagai, B., Moreau, R., & Ritchie, R. (2022). Punt Returns: Using the Math to Find the Path. NFL Big Data Bowl 2022. https://www.kaggle.com/code/robynritchie/punt-returns-using-the-math-to-find-the-path/notebook#How-is-this-innovative-and-useful-to-the-NFL
+
+Ibrahim, P. (2020). A Spatial Framework for Analyzing NFL Offensive Line Play. University of Chicago. https://www.stat.cmu.edu/cmsac/conference/2021/assets/pdf/PaulIbrahim.pdf
+
+Stern, A. (2019). Practical Applications of Space Creation for the Modern NFL Franchise. NFL Big Data Bowl 2019. https://operations.nfl.com/media/4202/bdb_stern.pdf
