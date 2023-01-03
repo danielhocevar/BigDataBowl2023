@@ -7,7 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1aUmwl3xliHGnbCv_uw60tS2RSVNr8qtM
 """
 
-!pip install scikit-survival
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
