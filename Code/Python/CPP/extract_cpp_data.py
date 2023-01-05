@@ -7,8 +7,12 @@ Original file is located at
     https://colab.research.google.com/drive/1GA9APxWO8RUbNCDEYJDhpHW0p5zltuab
 """
 
-def pocketPressureNoVisualization(imgSize=(10.66, 24),
-                   playerCoordinatesProvided=False,
+# extractPocketPressureArray Function
+# Extracts CPP Pocket Pressure Array for a given frame of data
+# Most parameters taken from visualization code see descriptions there
+# Important parameter playerCoordinates specifying the coordinates for the players at a particular frame as well as the startingPlayerDistances which provides info on the starting position of players
+
+def pocketPressureNoVisualization(playerCoordinatesProvided=False,
                    playerCoordinates=[],
                    labelNumbers=True,
                    showArrow=True,
@@ -24,9 +28,11 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
   offense_pdf=None
   defense_pdf=None
   qb_pdf = None
+  #Sets coordinates to be flipped in x and y coordinates so that the field is vertical rather than horizontal (does not affect results)
   x, y = np.mgrid[0:53.3:1, 0:120:1]
   locations = np.dstack((x, y))
 
+  #Determined each speed in x and y, as well as distance from the QB
   xCoordinateQB=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp']=='QB')]['x'].unique()[0]
   yCoordinateQB=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp']=='QB')]['y'].unique()[0]
   teamQB=playerCoordinates.loc[(playerCoordinates['pff_positionLinedUp']=='QB')]['team'].unique()[0]
@@ -47,7 +53,7 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
 
   qb_pos_x = 0
   qb_pos_y = 0
-  
+  #Isolating pass rushers
   pass_rushers=playerCoordinates.loc[(playerCoordinates['pff_role']=='Pass Rush')]
   # Generate pdf's for the defensive players and the quarteback
   for index, row in playerCoordinates.iterrows():
@@ -56,14 +62,17 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
       speed_Ratio=(row['s']**2)/(100)
       topLeftSMatrix=(row['distanceFromQB']+row['distanceFromQB']*speed_Ratio)/2
       bottomRightSMatrix=(row['distanceFromQB']-row['distanceFromQB']*speed_Ratio)/2
+      #Setting up R and S matrix in bivariate normal distribution
       r_matrix=[(row['xComponent'], -row['yComponent']),(row['yComponent'], row['xComponent'])];
       r_matrix=pd.DataFrame(data=r_matrix)
+      #Adds very small value to ensure matrix is invertible even if player is completely stationary
       s_matrix=[(topLeftSMatrix+0.00001,0), (0, bottomRightSMatrix-0.000001)]
       s_matrix=pd.DataFrame(data=s_matrix)
       inverse_r_Matrix=np.linalg.inv(r_matrix)
       multiplyingTogetherFirstTwoMatrices=r_matrix.dot(s_matrix)
       nextMatrix=multiplyingTogetherFirstTwoMatrices.dot(s_matrix)
       covariance_matrix=nextMatrix.dot(inverse_r_Matrix)
+      #y coordinate is flipped as a result of the axes defined, but yspeed is defined in the correct axes
       mu_val_x=row['y']+row['yspeed']*0.5
       mu_val_y=row['x']+row['xspeed']*0.5
       mu=[mu_val_x,mu_val_y]
@@ -76,20 +85,27 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
         # Otherwise, update the existing pdf
         defense_pdf = defense_pdf + player_pdf
     elif row['officialPosition'] == "QB":
+        #Determines QB x and y coordinates
         qb_pos_x = row['y']
         qb_pos_y = row['x']
     elif row['team']==row['possessionTeam'] and row['pff_role']=='Pass Block':
+      #Looking at pass blockers protection
       distance_from_QB = row['distanceFromQB']
+      #Determines which defensive pass rusher is closest to the QB
       minDistancePassRusherToQB=min(pass_rushers['distanceFromQB'])
+      #Arbitrarily large min distance pass rush so it will be set within the loop
       minDistancePassRush=1000
       for index, rowPass in pass_rushers.iterrows():
+        #Determines the smallest distance between the pass blocker and the nearest pass rusher
         totalDistance=((rowPass['x']-row['x'])**2+(rowPass['y']-row['y'])**2)**(1/2)
         if totalDistance<=minDistancePassRush:
+          #If this is the smallest distance then set the coordinates for the nearest pass rusher based on these players
           minDistancePassRush=totalDistance
           xCoordinatePassRusher=rowPass['x']
           yCoordinatePassRusher=rowPass['y']
           speedPassRusher=rowPass['s']
           dirPassRusher=rowPass['dir']
+      #With these coordinates, determine the distances between each of the players involved (QB, offensive, and defensive lines)
       p12=((xCoordinateQB-row['x'])**2+(yCoordinateQB-row['y'])**2)**(1/2)
       p23=((xCoordinateQB-xCoordinatePassRusher)**2+(yCoordinateQB-yCoordinatePassRusher)**2)**(1/2)
       p13=(((row['x']-xCoordinatePassRusher)**2)+((row['y']-yCoordinatePassRusher)**2))**(1/2)
@@ -97,7 +113,7 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
       degreesAngleBetweenThreePlayers=math.degrees(angleBetweenThreePlayers)
       angleFrom180=abs(degreesAngleBetweenThreePlayers-180)
       normalizedDistance=minDistancePassRusherToQB/(startingPlayerDistances[row['nflId']])
-
+      #Described above
       speed_Ratio=(row['s']**2)/(100)
       topLeftSMatrix=(row['distanceFromQB']+row['distanceFromQB']*speed_Ratio)/2
       bottomRightSMatrix=(row['distanceFromQB']-row['distanceFromQB']*speed_Ratio)/2
@@ -118,17 +134,21 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
         offense_pdf_is_none = False
       else:
         offense_pdf = offense_pdf + normalizedDistance*degreesAngleBetweenThreePlayers*(player_pdf/180)
+  #determined defensive control at every coordinate
   pdf=np.array(defense_pdf)/(np.array(defense_pdf)+np.array(offense_pdf))
-  qb_area = plt.Circle((qb_pos_x, qb_pos_y), 4, linewidth=2, color='w', fill=False)
+  #Creates pdf centred around the QB with areas closer to the QB having higher value
   qb_pdf = multivariate_normal([qb_pos_x, qb_pos_y], [[6, 0], [0, 6]]).pdf(locations)
   pressure_pdf = np.array(qb_pdf) * np.array(pdf)
-  display_pdf=np.array(qb_pdf) * np.array(offense_pdf)
-  pressure_val = np.sum(np.sum(pressure_pdf, axis=1), axis=0) / np.sum(np.sum(qb_pdf, axis=1), axis=0) # 27 is the scaling factor
+  pressure_val = np.sum(np.sum(pressure_pdf, axis=1), axis=0) / np.sum(np.sum(qb_pdf, axis=1), axis=0)
+  #Normalizes pressure value to between 0.5 and 0.8
   pressure_val=(pressure_val-0.50)/(0.80-0.50)
+  #If pressure value is greater than 0.8 it should also be classified as 100% pressure
   if pressure_val>=1:
     pressure_val=1
+  #If pressure value is less than 0.5 it should be classified as 0% pressure
   if pressure_val<=0:
     pressure_val=0
+  #Only includes plays from the snap of the ball up until the forward pass or the QB is sacked
   if playerCoordinates['event'].unique()[0]=="ball_snap":
     recordingArrayBool=True
   elif playerCoordinates['event'].unique()[0]=="pass_forward" or playerCoordinates['event'].unique()[0]=="qb_sack" or playerCoordinates['event'].unique()[0]=="qb_strip_sack":
@@ -137,6 +157,16 @@ def pocketPressureNoVisualization(imgSize=(10.66, 24),
   if recordingArrayBool==True:
     recordingArray.append(pressure_val)
   return (recordingArrayBool, recordingArray)
+
+# extractPocketPressureArray Function
+# df1 specifies the tracking data dataframe
+# df2 specifies the game dataframe
+# df3 specifies the play data from the plays dataset
+# df4 specifies the player dataframe from the players dataset
+# df5 specifies the pffScouting dataframe from the pff dataset
+# playId specifies the play analyzed
+# gameId specifies the game from which the play was taken
+# Prepares the dataframe so it can be entered into the CPP extraction function
 
 def extractPocketPressureArray(df1,df2, df3,df4, df5, playId, gameId):
   dictionaryValidPos={'SHOTGUN':['HB','HB-R','HB-L','TE','TE-L','TE-R','LT','RT','C','LG','RG','QB'],
@@ -157,14 +187,54 @@ def extractPocketPressureArray(df1,df2, df3,df4, df5, playId, gameId):
   testingNew=pd.merge(testingNew,df3,on=['playId','gameId'], how='left')
   testingNew=pd.merge(testingNew,df4,on='nflId', how='left')
   testingNew=pd.merge(testingNew, df5, on=['playId','gameId','nflId'], how='left')
-
-  startingPlayerDistances=determiningDistancesAtTimeOfSnap(testingNew, timeSnap,dictionaryValidPos)
+  #Provides the starting distances from the QB for every player
+  startingPlayerDistances=determiningDistancesAtTimeOfSnap(testingNew, timeSnap)
   array_Of_Images=[]
   recordingArrayBool=False
   recordingArray=[]
-  for i in distinctTimes: 
-    dfForRunning=processToVisualize(df1,df2,df3,df4,df5, playId, i, gameId) #Goes through each time to process the data to visualize on the football field
+  #extracts the pressure value for each distinct time during the play
+  for i in distinctTimes: #Goes through each time to process the data to visualize on the football field
+    dfForRunning=processToVisualize(df1,df2,df3,df4,df5, playId, i, gameId) 
     recordingArrayInfo=pocketPressureNoVisualization(playerCoordinates = dfForRunning, fieldColor='darkgreen', endZoneColor='purple', startingPlayerDistances=startingPlayerDistances, recordingArrayBool=recordingArrayBool, recordingArray=recordingArray)
     recordingArrayBool=recordingArrayInfo[0]
     recordingArray=recordingArrayInfo[1]
   return recordingArray
+
+# determiningDistancesAtTimeOfSnap Function
+# tab specifies the data passed in from the extractPocketPressureArray function
+# timeSnap specifies the time of the snap
+# Prepares the dataframe so it can be entered into the CPP extraction function
+
+def determiningDistancesAtTimeOfSnap(tab, timeSnap):
+  xCoordinateQB=tab.loc[(tab['pff_positionLinedUp']=='QB')]['x'].unique()[0]
+  yCoordinateQB=tab.loc[(tab['pff_positionLinedUp']=='QB')]['y'].unique()[0]
+  teamQB=tab.loc[(tab['pff_positionLinedUp']=='QB')]['team'].unique()[0]
+  tab['distanceFromQB']=((tab['x']-xCoordinateQB)**2 + (tab['y']-yCoordinateQB)**2)**(1/2)
+  oLinePlayers=tab.loc[tab['pff_role']=='Pass Block']
+  #Determines the distances for every pass blocker for the offense
+  dictPlayerDistances={}
+  for index, row in oLinePlayers.iterrows():
+    dictPlayerDistances[row['nflId']]=row['distanceFromQB']
+  return dictPlayerDistances
+
+# processToVisualize Function
+# df1 specifies the week of games dataframe
+# df2 specifies the games dataframe
+# playId specifies the playId from the week dataframe
+# time specifies a particular time to create the image
+# Prepares the dataframe so it can be entered into the CPP extraction function
+
+def processToVisualize(df1,df2,df3,df4,df5, playId, time, gameId):
+  testing=df1.loc[(df1['playId'] == playId) & (df1['time']==time) & (df1['gameId'] == gameId)]
+  testingNew=pd.merge(testing,df2, on='gameId', how='left')
+  testingNew=pd.merge(testingNew,df3,on=['playId','gameId'], how='left')
+  testingNew=pd.merge(testingNew,df4,on='nflId', how='left')
+
+  # Merge pff scouting data
+  testingNew=pd.merge(testingNew, df5, on=['playId','gameId','nflId'], how='left')
+  testingNew['radiansDirection'] = testingNew['dir'].astype(float).apply(math.radians) #Converts angle in degrees to radians
+  testingNew['xComponent']=testingNew['radiansDirection'].astype(float).apply(math.cos) #Converts angle into an x and y component
+  testingNew['yComponent']=testingNew['radiansDirection'].astype(float).apply(math.sin)
+  testingNew['xspeed']=testingNew['xComponent']*testingNew['s'] #Determines magnitude of speed by multiplying x and y component by magnitude of speed
+  testingNew['yspeed']=testingNew['yComponent']*testingNew['s']
+  return testingNew
