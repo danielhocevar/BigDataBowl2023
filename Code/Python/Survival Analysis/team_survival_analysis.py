@@ -7,6 +7,10 @@ Original file is located at
     https://colab.research.google.com/drive/1peA65vCAGkpQ3g94RbibUO2njBr9fPEQ
 """
 
+# create_survival_analysis function
+# Nearly identical Function to that in player_survival_analysis.py
+# Larger censor time (40 frames) since data available for teams is larger than individual players
+
 def create_survival_analysis(df):
 
     frames = []
@@ -31,25 +35,37 @@ def create_survival_analysis(df):
     plt.show()
     return [pred_frame, pred_survival_prob]
 
+#extract_auc_array_defence function
+#Extracting the DPLE for each team
+#df takes in the final dataset dataframe with the pressure array (of float datatype)
+
 def extract_auc_array_defence(df):   
   all_team_pressures = []
   all_team_survival_auc_defence = []
   teams = df["defensiveTeam"].unique()
+  #Team-by-team analysis
   for team in teams:
     team_pressure_array = [team]
     team_survival_auc = [team]
     team_df = df.loc[df["defensiveTeam"]==team]
     team_pressure = team_df['Pressure Array']
     lst = []
+    #Creates new dataframe consisting only of the pressure array
     for index, row in team_df.iterrows():
       lst.append(row['Pressure Array'])
     lst_df = pd.DataFrame(lst)
     survival_curve = create_survival_analysis(lst_df)
+    #For each frame value convert to seconds by multiplying by 0.1
     survival_curve [0] = 0.1 * survival_curve[0]
+    #Complete simpson's integration to extract AUC
     survival_auc = integrate.simpson(survival_curve[1], survival_curve[0], axis=0)
     team_survival_auc.append(survival_auc)
     all_team_survival_auc_defence.append(team_survival_auc)
     return all_team_survival_auc_defence
+
+# extract_auc_array_offence
+# Identical to extract_auc_array defence but for the possession team
+# df takes in the final dataset dataframe with the pressure array (of float datatype)
 
 def extract_auc_array_offence(df):  
   all_team_pressures = []
