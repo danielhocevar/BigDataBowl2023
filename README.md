@@ -1,4 +1,4 @@
-# Between the Lines: How do We Measure Pressure?
+# Between the Lines: How Do We Measure Pressure?
 
 ### University of Toronto Sports Analytics Student Group
 
