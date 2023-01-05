@@ -39,3 +39,5 @@ Cavan, E., Kumagai, B., Moreau, R., & Ritchie, R. (2022). Punt Returns: Using th
 Ibrahim, P. (2020). A Spatial Framework for Analyzing NFL Offensive Line Play. University of Chicago. https://www.stat.cmu.edu/cmsac/conference/2021/assets/pdf/PaulIbrahim.pdf
 
 Stern, A. (2019). Practical Applications of Space Creation for the Modern NFL Franchise. NFL Big Data Bowl 2019. https://operations.nfl.com/media/4202/bdb_stern.pdf
+
+The National Football League. (2022). NFL Big Data Bowl 2023 Dataset. Retreived October 6, 2022 from https://www.kaggle.com/competitions/nfl-big-data-bowl-2023/data
