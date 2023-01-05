@@ -18,7 +18,7 @@ Our Code directory contains all code applied to complete our NFL Big Data Bowl P
 
 ### Dataset
 
-Our Dataset directory contains the csv we used to conduct our analysis of OPLE/DPLE by team. This dataset includes the playId, gameId, CPP data at every frame of the dataset, play data from the Plays csv as well as information from the PFF Scouting Dataset. This dataset includes only plays discussed in our Data Preparation section of the Kaggle submission.
+Our Dataset directory contains the csv we used to conduct our analysis of OPLE/DPLE by team. This dataset includes the playId, gameId, CPP data at every frame of the dataset, play data from the Plays Dataset as well as information from the PFF Scouting Dataset. This dataset includes only plays discussed in our Data Preparation section of the Kaggle submission.
 
 ### Formulas
 
