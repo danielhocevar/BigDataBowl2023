@@ -39,7 +39,7 @@ def create_survival_analysis(df):
 
 #Working with the final dataset provided in the github
 updatedFinalDataset=pd.read_csv("finalDataset.csv")
-scout=pd.read_csv
+scout=pd.read_csv("pffScoutingData.csv")
 #Converting array to array of integers as opposed to a string
 float_df = updatedFinalDataset["Pressure Array"].apply(lambda x: [float(el) for el in x.strip("[]").split(",")])
 updatedFinalDataset["Pressure Array"] = float_df
@@ -76,7 +76,7 @@ for team in teams:
       else:
         dictTeam[i]=[[row['gameId'],row['playId']]]
   for i in dictTeam:
-    if len(dictTeam[i])>=35:
+    if len(dictTeam[i])>=0:
       try:
         lst=[]
         #Seperates the plays into the ones where the player was involved versus not
@@ -98,20 +98,20 @@ for team in teams:
         survival_curve = create_survival_analysis(lst_df)
         survival_curve [0] = 0.1 * survival_curve[0]
         off_field_survival_auc = integrate.simpson(survival_curve[1], survival_curve[0], axis=0)
-        dictPlayer[i]=[on_field_survival_auc,off_field_survival_auc]
+        dictPlayer[i]=[on_field_survival_auc,off_field_survival_auc, len(dictTeam[i])]
       except:
         pass
 
 #Determines DPLE when on the field versus off the field and the surplus value for each player
 listSurplusValue=[]
 for i in dictPlayer:
-  listSurplusValue.append([i,dictPlayer[i][1]-dictPlayer[i][0], dictPlayer[i][0], dictPlayer[i][1]])
+  listSurplusValue.append([i,dictPlayer[i][2]*(dictPlayer[i][1]-dictPlayer[i][0]),dictPlayer[i][2], dictPlayer[i][1]-dictPlayer[i][0], dictPlayer[i][0], dictPlayer[i][1]])
 
 playerSurplusValue=pd.DataFrame(Sort(listSurplusValue))
-playerSurplusValue.columns=['nflId','surplusValue','On-Field Expectancy (35 Frames)','Off-Field Expectancy (35 Frames)']
-#Ranks players by overall surplus value
+playerSurplusValue.columns=['nflId','TotalSurplusPressure','Number of Plays','surplusValuePerPlay','On-Field Expectancy (35 Frames)','Off-Field Expectancy (35 Frames)']
+#Ranks players by total surplus pressure
 playerSurplusTable=pd.merge(playerSurplusValue, players, on='nflId')
-orderedRankings=playerSurplusTable.sort_values('surplusValue', ascending=False)
+orderedRankings=playerSurplusTable.sort_values('TotalSurplusPressure', ascending=False)
 #Seperates rankings by pass rush position
 defensiveEndRankings=orderedRankings.loc[orderedRankings['officialPosition']=="DE"]
 OLBRankings=orderedRankings.loc[orderedRankings['officialPosition']=="OLB"]
