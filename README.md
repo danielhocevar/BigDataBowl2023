@@ -6,7 +6,7 @@ Hassaan Inayatali, Engineering Science Undergraduate Student | [Linkedin](https:
 
 Daniel Hocevar, Computer Science Undergraduate Student | [Linkedin](https://www.linkedin.com/in/danielhocevar/)
 
-Aaron White, Statistics Undergraduate Student | [Linkedin](https://www.linkedin.com/in/white-aaron/)
+Aaron White, Statistics Undergraduate Student | [Linkedin](https://www.linkedin.com/in/whiteaaron/)
 
 ### Submission for the 2023 NFL Big Data Bowl - Undergraduate Track
 
